@@ -1,6 +1,7 @@
 import random
+import os
 
-# 🎯 Word bank — you can expand this list or load from a file
+# 🎯 Word bank — used for single-player mode
 WORDS = [
     "python", "developer", "hangman", "challenge", "terminal",
     "algorithm", "variable", "function", "object", "inheritance",
@@ -75,13 +76,29 @@ HANGMAN_STAGES = [
 ]
 
 
+def clear_screen():
+    """Clear terminal screen for cleaner display."""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
 def get_random_word():
     """Return a random word from the word bank."""
     return random.choice(WORDS).lower()
 
 
+def get_player_word():
+    """Get a custom word from Player 1 for Player 2 to guess."""
+    clear_screen()
+    word = input("🧑‍🤝‍🧑 Player 1, enter a word for Player 2 to guess: ").lower().strip()
+    while not word.isalpha():
+        word = input("⚠️ Please enter only alphabetic characters: ").lower().strip()
+    clear_screen()
+    print("🔒 Word has been set. Player 2, get ready!\n")
+    return word
+
+
 def display_game_state(word, guessed_letters, attempts_left):
-    """Display the current hangman stage, word progress, and guesses."""
+    """Display the hangman, word progress, and guesses."""
     print(HANGMAN_STAGES[len(HANGMAN_STAGES) - attempts_left - 1])
     print("\nWord:", " ".join([letter if letter in guessed_letters else "_" for letter in word]))
     print(f"Guessed letters: {', '.join(sorted(guessed_letters))}")
@@ -89,11 +106,22 @@ def display_game_state(word, guessed_letters, attempts_left):
 
 
 def play_hangman():
-    """Main function to play Hangman."""
+    """Main function for Hangman game."""
+    clear_screen()
     print("🎮 Welcome to Hangman!")
-    print("Guess the word before the hangman is fully drawn.\n")
+    print("1️⃣  Single-player (guess a random word)")
+    print("2️⃣  Two-player (one sets the word, one guesses)\n")
 
-    word = get_random_word()
+    mode = input("Choose a mode (1 or 2): ").strip()
+
+    if mode == "1":
+        word = get_random_word()
+    elif mode == "2":
+        word = get_player_word()
+    else:
+        print("⚠️ Invalid choice. Defaulting to single-player mode.\n")
+        word = get_random_word()
+
     guessed_letters = set()
     attempts_left = len(HANGMAN_STAGES) - 1
 
@@ -112,13 +140,13 @@ def play_hangman():
         guessed_letters.add(guess)
 
         if guess in word:
-            print("✅ Nice! That letter is in the word.\n")
+            print("✅ Good guess!\n")
         else:
-            print("❌ Oops! That letter is not in the word.\n")
+            print("❌ That letter is not in the word.\n")
             attempts_left -= 1
 
         if all(letter in guessed_letters for letter in word):
-            print(f"🎉 Congratulations! You guessed the word: {word.upper()}")
+            print(f"🎉 You guessed the word: {word.upper()} — You win!")
             break
     else:
         display_game_state(word, guessed_letters, attempts_left)
