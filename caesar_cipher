@@ -1,0 +1,30 @@
+def caesar_cipher(text: str, shift: int, mode: str = 'encrypt') -> str:
+    """Encrypts or decrypts a text using the Caesar cipher."""
+    result = ""
+    
+    # Adjust shift for decryption
+    if mode == 'decrypt':
+        shift = -shift
+
+    for char in text:
+        if char.isalpha():  # Only shift letters
+            start = ord('A') if char.isupper() else ord('a')
+            # Shift within 26 letters
+            new_char = chr((ord(char) - start + shift) % 26 + start)
+            result += new_char
+        else:
+            result += char  # Keep punctuation unchanged
+
+    return result
+
+
+# Example usage:
+message = "Hello, World!"
+key = 3
+
+encrypted = caesar_cipher(message, key, 'encrypt')
+decrypted = caesar_cipher(encrypted, key, 'decrypt')
+
+print("Original:", message)
+print("Encrypted:", encrypted)
+print("Decrypted:", decrypted)
