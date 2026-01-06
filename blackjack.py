@@ -44,13 +44,14 @@ def is_blackjack(hand):
     return len(hand) == 2 and calculate_hand_value(hand) == 21
 
 def display_hand(hand, name, hide_first_card=False):
+    import art
     print(f"{name}'s hand:")
-    for i, card in enumerate(hand):
-        if hide_first_card and i == 0:
-            print("  Hidden card")
-        else:
-            print(f"  {card}")
+    card_lines = [art.card_art(card.rank, card.suit) if not (hide_first_card and i == 0) else art.hidden_card_art()
+                  for i, card in enumerate(hand)]
+    for i in range(7):
+        print('  '.join(card[i] for card in card_lines))
     if not hide_first_card:
+        print(f"  Value: {calculate_hand_value(hand)}")
         print(f"  Value: {calculate_hand_value(hand)}\n")
 
 def load_players():
