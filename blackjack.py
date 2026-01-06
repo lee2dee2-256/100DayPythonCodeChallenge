@@ -1,7 +1,7 @@
 import random
 import json
 import os
-import art
+import bj_art as art
 
 print(art.logo)
 
